@@ -19,6 +19,7 @@ var outputs = io.of('/output');
 // Listen for output clients to connect
 outputs.on('connection', function(socket){
   game.addOutputClient(socket)
+  console.log(game.outputClients)
   // Listen for this output client to disconnect
   socket.on('disconnect', function() {
     console.log("An output client has disconnected " + socket.id);
