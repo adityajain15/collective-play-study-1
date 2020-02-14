@@ -30,26 +30,43 @@ class Game{
 
   // add input client
   addInputClient (socket) {
-    const assignedColor = paperColors[this.outputClients.length].hex
-    this.inputClients.push({
+    const userObject = {
       socket: socket,
-      color: assignedColor
-    })
-    return assignedColor
+      color: paperColors[this.outputClients.length].hex,
+      x: Math.random(),
+      y: Math.random()
+    }
+    this.inputClients.push(userObject)
+    return {
+      color: userObject.color,
+      x: userObject.x,
+      y: userObject.y,
+      id: userObject.socket.id
+    }
   }
+
+  // remove input client
+  removeInputClient (id) {
+    if(this.inputClients.find(el=>el.socket.id === id)) {
+      this.inputClients.splice(this.inputClients.findIndex(el=>el.socket.id === id), 1)
+    }
+  }
+
   // add output client
   addOutputClient (socket) {
     this.outputClients.push({
-      socket: socket,
       x: Math.random(),
       y: Math.random(),
-      score: 0
+      score: 0,
+      socket: socket
     })
   }
 
-  // remove output client / might not be needed
-  removeOutputClient () {
-    this.outputClients = []
+  // remove output client
+  removeOutputClient (id) {
+    if(this.outputClients.find(el=>el.socket.id === id)) {
+      this.outputClients.splice(this.outputClients.findIndex(el=>el.socket.id === id), 1)
+    }
   }
   
   // Does the game have atleast 4 input clients and 1 output client?
