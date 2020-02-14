@@ -1,6 +1,6 @@
 // Open and connect input socket
 let socket = io('/input');
-
+console.log('ba')
 // Listen for confirmation of connection
 socket.on('connect', function() {
   console.log("Connected");
