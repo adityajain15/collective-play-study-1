@@ -2,6 +2,7 @@
 let socket = io('/output')
 
 // use the arrays below to draw everything, they should contain all the information you need
+// DO NOT MUTATE THESE OBJECTS, THEY SHOULD BE READ ONLY
 let outputClients = []
 let inputClients = []
 
