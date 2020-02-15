@@ -22,40 +22,16 @@ outputs.on('connection', function(socket){
   game.addOutputClient(socket)
   console.log(game.outputClients.length)
   // send this output client a list of all current output clients (which includes itself)
-  const outputClients = game.outputClients.map(d => {
-    return {
-      x: d.x,
-      y: d.y,
-      score: d.score,
-      id: d.socket.id
-    }
-  })
-  outputs.emit('outputClients', outputClients)
-
+  outputs.emit('outputClients', game.getOutputClients())
   // send this output client a list of all current input clients
-  const inputClients = game.inputClients.map(d=>{
-    return {
-      x: d.x,
-      y: d.y,
-      color: d.color,
-      id: d.socket.id
-    }
-  })
-  socket.emit('inputClients', inputClients)
+  socket.emit('inputClients', game.getInputClients())
 
   // Listen for this output client to disconnect
   socket.on('disconnect', function() {
     console.log("An output client has disconnected " + socket.id);
     game.removeOutputClient(socket.id)
-    const outputClients = game.outputClients.map(d => {
-      return {
-        x: d.x,
-        y: d.y,
-        score: d.score,
-        id: d.socket.id
-      }
-    })
-    outputs.emit('outputClients', outputClients)
+    // send the remaining output clients a notification that this output client has dropped out
+    outputs.emit('outputClients', game.getOutputClients())
   });
 });
 
@@ -65,24 +41,24 @@ var inputs = io.of('/input');
 inputs.on('connection', function(socket){
   console.log('An input client connected: ' + socket.id);
   // add input client to the game
-  const userObject = game.addInputClient(socket)
+  game.addInputClient(socket)
   // send the input client its own info
-  socket.emit('init', userObject)
+  socket.emit('init', game.getClientById(socket.id))
   // send a list of updated input clients to all the output clients
-  const inputClients = game.inputClients.map(d=>{
-    return {
-      x: d.x,
-      y: d.y,
-      color: d.color,
-      id: d.socket.id
-    }
-  })
-  outputs.emit('inputClients', inputClients)
+  outputs.emit('inputClients', game.getInputClients())
   
 
   // Listen for data messages from this input client
   socket.on('data', function(data) {
+    const x = data.x
+    const y = data.y
+    const id = data.id
     
+    game.changePosition(id, x, y)
+    game.wormholeCheck(id, x, y)
+    socket.emit('init', game.getClientById(id))
+
+    outputs.emit('inputClients', game.getInputClients())
   })
 
   socket.on('disconnect', function() {
@@ -90,14 +66,6 @@ inputs.on('connection', function(socket){
     // remove the input client from the game
     game.removeInputClient(socket.id)
     // send a list of updated input clients to all the output clients
-    const inputClients = game.inputClients.map(d=>{
-      return {
-        x: d.x,
-        y: d.y,
-        color: d.color,
-        id: d.socket.id
-      }
-    })
-    outputs.emit('inputClients', inputClients)
+    outputs.emit('inputClients', game.getInputClients())
   });
 });

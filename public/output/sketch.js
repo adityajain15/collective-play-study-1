@@ -1,48 +1,46 @@
 // Open and connect output socket
-let socket = io('/output');
-// Keep track of users
-let users = {};
+let socket = io('/output')
+
+// use the arrays below to draw everything, they should contain all the information you need
+let outputClients = []
+let inputClients = []
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-  background(255);
+  createCanvas(windowWidth, windowHeight)
+  background(255)
+  
+  /*
+  -- You should not need to edit this function ---
+  DESCRIPTION: Gives this output client information about all other output clients, including itself
+    @PAYLOAD: data, an array of objects
+      @x: normalized x position (between 0 and 1) of the wormhole
+      @y: normalized y position (between 0 and 1) of the wormhole
+      @score: an output client's score
+      @id: an output client's id, compare this to socket.id to find out if this the currently connected output client
+  */
+  socket.on('outputClients', function(data){
+    console.log('---OUTPUT CLIENTS---')
+    console.log(data)
+    outputClients = data
+  })
 
-  // Receive message from server
-  socket.on('message', function(message){
-    // Get id and data from message
-    let id = message.id;
-    let data = message.data;
-
-    // Update user's data
-    if(id in users) {
-      let user = users[id];
-      user.ppos = user.pos;
-      user.pos = data;
-    }
-    // Or create a new user
-    else {
-      users[id] = {
-        pos: data,
-        ppos : data
-      }
-    }
-  });
-
-  // Remove disconnected users
-  socket.on('disconnected', function(id){
-    delete users[id];
-  });
+  /*
+  -- You should not need to edit this function ---
+  DESCRIPTION: Gives this output client information about all input clients
+    @PAYLOAD: data, an array of objects
+      @x: normalized x position (between 0 and 1) of the input client
+      @y: normalized y position (between 0 and 1) of the input client
+      @color: the input client's color
+      @id: the input client's id, for convenience
+      @hasFallen: if the input client has fallen into any wormhole, use this to determine whether to draw this input client or not
+  */
+  socket.on('inputClients', function(data){
+    console.log('---INPUT CLIENTS---')
+    console.log(data)
+    inputClients = data
+  })
 }
 
 function draw() {
-  // Draw all the user lines
-  for (let u in users) {
-    // Get user's data
-    let user = users[u];
-    // Get this user's positions
-    let ppos = user.ppos;
-    let pos = user.pos;
-    // Draw the latest line segment
-    line(ppos.x, ppos.y, pos.x, pos.y);
-  }
+  
 }

@@ -1,54 +1,59 @@
 const paperColors = require('paper-colors');
 
 // Select a random color
-const color = paperColors[Math.floor(Math.random() * paperColors.length)];
+const color = paperColors
+let index = 0
+
 
 class Game{
   constructor(){
     this.inputClients = []
     this.outputClients = []
-    this.hasStarted = false
-  }
-
-  // return the current score
-  getScore () {
-    return this.score
-  }
-
-  // award a point
-  incrementScore () {
-    this.score += 1
-  }
-
-  startGame () {
-    this.hasStarted = true
-  }
-
-  stopGame () {
-    this.hasStarted = false
+    this.isFinished = false
   }
 
   // add input client
   addInputClient (socket) {
-    const userObject = {
+    this.inputClients.push({
       socket: socket,
-      color: paperColors[this.outputClients.length].hex,
+      color: paperColors[index % 12].hex,
       x: Math.random(),
-      y: Math.random()
-    }
-    this.inputClients.push(userObject)
-    return {
-      color: userObject.color,
-      x: userObject.x,
-      y: userObject.y,
-      id: userObject.socket.id
-    }
+      y: Math.random(),
+      hasFallen: false
+    })
+    index++
   }
 
   // remove input client
   removeInputClient (id) {
     if(this.inputClients.find(el=>el.socket.id === id)) {
       this.inputClients.splice(this.inputClients.findIndex(el=>el.socket.id === id), 1)
+    }
+  }
+
+  // get data for all input clients
+  getInputClients () {
+    const inputClients = this.inputClients.map(d=>{
+      return {
+        x: d.x,
+        y: d.y,
+        color: d.color,
+        id: d.socket.id,
+        hasFallen: d.hasFallen
+      }
+    })
+    return inputClients
+  }
+
+  getClientById (id) {
+    const user = this.inputClients[this.inputClients.findIndex(d=>d.socket.id === id)]
+    
+    return {
+      color: user.color,
+      x: user.x,
+      y: user.y,
+      id: user.socket.id,
+      hasFallen: user.hasFallen
     }
   }
 
@@ -68,15 +73,43 @@ class Game{
       this.outputClients.splice(this.outputClients.findIndex(el=>el.socket.id === id), 1)
     }
   }
-  
-  // Does the game have atleast 4 input clients and 1 output client?
-  canStart () {
 
+  // get data for all output clients
+  getOutputClients() {
+    const outputClients = this.outputClients.map(d => {
+      return {
+        x: d.x,
+        y: d.y,
+        score: d.score,
+        id: d.socket.id
+      }
+    })
+    return outputClients
+  }
+  
+  // change position of input client
+  changePosition (id, x, y) {
+    if(this.inputClients.find(el=>el.socket.id === id)) {
+      const index = this.inputClients.findIndex(el => el.socket.id === id)
+      this.inputClients[index].x = x
+      this.inputClients[index].y = y
+    }
   }
 
-  // get a random input client from list of input clients
-  getRandomInputClient () {
+  wormholeCheck (id, x, y) {
+    for(let i = 0; i < this.outputClients.length; i++) {
+      const distance = Math.hypot(x - this.outputClients[i].x, y - this.outputClients[i].y)
+      if(distance < 0.05) {
+        this.inputClients[this.inputClients.findIndex(d => d.socket.id === id)].hasFallen = true
+        this.outputClients[i].score += 1
+        break
+      }
+    }
+  }
 
+  hasGameFinished () {
+    this.isFinished = this.inputClients.map(d=>d.hasFallen).reduce((a,b)=>a&&b, true)
+    return this.isFinished
   }
 }
 
