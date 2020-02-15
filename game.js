@@ -1,9 +1,8 @@
 const paperColors = require('paper-colors');
 
-// Select a random color
+// pastel colors, and a counter to allot unique colors as often as possible
 const color = paperColors
 let index = 0
-
 
 class Game{
   constructor(){
