@@ -41,11 +41,11 @@ function setup() {
   */
   socket.on('init', function(data) {
     inputClient = data
-    updateCanvas()
+    
   })
 }
 
-function updateCanvas(){
+function draw(){
   background(255);
     
   if (inputClient && !inputClient.hasFallen) {
@@ -121,9 +121,11 @@ function updateCanvas(){
         ySpeed = 0;
       }
       
-      (if xSpeed != 0 || ySpeed != 0) {
-          socket.emit('data', {x: x / width, y: y / height, id: socket.id});
-      } 
+      if(xSpeed !== 0.0 || ySpeed !== 0.0) {
+        socket.emit('data', {x: x / width, y: y / height, id: socket.id});
+      } else {
+        
+      }
   }
 
 }
