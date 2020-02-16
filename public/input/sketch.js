@@ -120,8 +120,10 @@ function updateCanvas(){
         y = 10;
         ySpeed = 0;
       }
-
-      socket.emit('data', {x: x / width, y: y / height, id: socket.id}); 
+      
+      (if xSpeed != 0 || ySpeed != 0) {
+          socket.emit('data', {x: x / width, y: y / height, id: socket.id});
+      } 
   }
 
 }
