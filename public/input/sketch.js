@@ -4,25 +4,11 @@ let socket = io('/input');
 // this object contains everything you need to draw in this sketch, including win conditions
 // DO NOT MUTATE THIS OBJECT, IT SHOULD BE READ ONLY
 // Changes to position are made by emitting the data, NOT by changing X, Y positions within this object
-let inputClient = null;
-
-let x;
-let y;
-
-let xSpeed = 0;
-let ySpeed = 0;
-
-//can be altered to preference
-let maxSpeed = 2;
-let accel = 0.04;
+let inputClient = {};
 
 function setup() {
   createCanvas(windowWidth, windowHeight)
   background(255)
-  noStroke();
-    
-  x = width/2;
-  y = height/2;
 
   // Listen for confirmation of connection
   socket.on('connect', function() {
@@ -40,94 +26,54 @@ function setup() {
         @id: this input client's id, for convinience
   */
   socket.on('init', function(data) {
+    console.log(data)
     inputClient = data
-    
+    updateCanvas()
   })
 }
 
-function draw(){
-  background(255);
-    
-  if (inputClient && !inputClient.hasFallen) {
-      fill(inputClient.color);
-      
-      circle(inputClient.x * width, inputClient.y * height, 20)
-      
-      x = inputClient.x * width;
-      y = inputClient.y * height;
-  
-      if (keyIsDown(LEFT_ARROW)) {
-        if (xSpeed > -maxSpeed) {
-          xSpeed -= accel;
-        }
-      }
+function updateCanvas() {
+  fill(0);
+  const mappedX = map(inputClient.x, 0, 1, 0, windowWidth)
+  const mappedY = map(inputClient.y, 0, 1, 0, windowHeight)
+  console.log(`current cordinates: ${mappedX}, ${mappedY}`)
+  console.log(`current cordinates: ${inputClient.x}, ${inputClient.y}`)
+  circle(mappedX, mappedY, 20);
+}
 
-      else if (keyIsDown(RIGHT_ARROW)) {
-        if (xSpeed < maxSpeed) {
-          xSpeed += accel;
-        }
-      }
-
-      else {
-        if (xSpeed > 0) {
-          xSpeed -= accel;
-        }
-        if (xSpeed < 0) {
-          xSpeed += accel;
-        }
-      }
-
-      if (keyIsDown(UP_ARROW)) {
-        if (ySpeed > -maxSpeed) {
-          ySpeed -= accel;
-        }
-      }
-
-      else if (keyIsDown(DOWN_ARROW)) {
-        if (ySpeed < maxSpeed) {
-          ySpeed += accel;
-        }
-      }
-
-      else {
-        if (ySpeed > 0) {
-          ySpeed -= accel;
-        }
-        if (ySpeed < 0) {
-          ySpeed += accel;
-        }
-      }
-
-      x += xSpeed;
-      y += ySpeed;
-
-      if(x > width-10) {
-        x = width-10;
-        xSpeed = 0;
-      }
-
-      if(x < 10) {
-        x = 10;
-        xSpeed = 0;
-      }
-
-      if(y > height-10) {
-        y = height-10;
-        ySpeed = 0;
-      }
-
-      if(y < 10) {
-        y = 10;
-        ySpeed = 0;
-      }
-      
-      if(xSpeed !== 0.0 || ySpeed !== 0.0) {
-        socket.emit('data', {x: x / width, y: y / height, id: socket.id});
-      } else {
-        
-      }
+function keyPressed() {
+  const mappedX = map(inputClient.x, 0, 1, 0, windowWidth)
+  const mappedY = map(inputClient.y, 0, 1, 0, windowHeight)
+  console.log(`current cordinates: ${mappedX}, ${mappedY}`)
+  console.log(`current cordinates: ${inputClient.x}, ${inputClient.y}`)
+  if (keyCode === LEFT_ARROW) {
+    //if(x<0)
+    const newX = ((mappedX - 1) / windowWidth)
+    console.log(newX)
+    socket.emit('data', {
+      x: ((mappedX - 100) / windowWidth),
+      y: mappedY,
+      id: socket.id
+    })
+  } else if (keyCode === RIGHT_ARROW) {
+    socket.emit('data', {
+      x: ((mappedX + 1) / windowWidth),
+      y: mappedY,
+      id: socket.id
+    })
+  } else if (keyCode === UP_ARROW) {
+    socket.emit('data', {
+      x: mappedX,
+      y: ((mappedY - 1) / windowHeight),
+      id: socket.id
+    })
+  } else if (keyCode === DOWN_ARROW) {
+    socket.emit('data', {
+      x: mappedX,
+      y: ((mappedY + 1) / windowHeight),
+      id: socket.id
+    })
   }
-
 }
 /*
 TODO: You will need to emit a 'data' function when the arrow keys are pressed, with the following payload
