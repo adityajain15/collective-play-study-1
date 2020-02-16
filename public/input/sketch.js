@@ -37,7 +37,7 @@ function setup() {
 function draw() {
   fill(0);
   mappedX = map(x, 0, 1, 0, windowWidth);
-  mappedY = map(y, 0, 1, 0, windowHeight)
+  mappedY = map(y, 0, 1, 0, windowHeight);
   circle(mappedX, mappedY, 20);
 }
 
@@ -63,7 +63,7 @@ function keyPressed() {
   } else(keyCode === DOWN_ARROW) {
     y++;
     socket.emit('data', {
-      x:mappedX,
+      x: mappedX,
       y: mappedY
     })
   }
