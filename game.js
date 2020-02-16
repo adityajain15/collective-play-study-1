@@ -1,8 +1,9 @@
-const paperColors = require('paper-colors');
-
+const paperColors = require('paper-colors')
+const Delaunay = require('d3-delaunay')
 // pastel colors, and a counter to allot unique colors as often as possible
 const color = paperColors
 let index = 0
+const winDistance = 0.05
 
 class Game{
   constructor(){
@@ -46,7 +47,6 @@ class Game{
 
   getClientById (id) {
     const user = this.inputClients[this.inputClients.findIndex(d=>d.socket.id === id)]
-    
     return {
       color: user.color,
       x: user.x,
@@ -85,6 +85,38 @@ class Game{
     })
     return outputClients
   }
+
+  // get optimal position x,y position for new client
+  getOptimalPosition(){
+    const points = []
+    for(let i = 0; i < this.outputClients.length; i++) {
+      points.push([this.outputClients[i].x, this.outputClients[i].y])
+    }
+    for(let i = 0; i < inputClients.length; i++) {
+      points.push([inputClients[i].x, inputClients[i].y])
+    }
+    if(points.length < 3) {
+
+    } else {
+      
+    }
+    const delaunay = d3.Delaunay.from(points)
+    //console.log(delaunay)
+    const voronoi = delaunay.voronoi([0, 0, 1, 1])
+    const polygons = voronoi.cellPolygons()
+    
+    let result = polygons.next();
+    while (!result.done) {
+      console.log(result.value);
+      for(let i = 0; i < result.value.length; i++) {
+        const screenX = map(result.value[i][0], 0, 1, 0, windowWidth)
+        const screenY = map(result.value[i][1], 0, 1, 0, windowHeight)
+        fill('red')
+        circle(screenX, screenY, 10)
+      }
+      result = polygons.next();
+    }
+  }
   
   // change position of input client
   changePosition (id, x, y) {
@@ -98,7 +130,7 @@ class Game{
   wormholeCheck (id, x, y) {
     for(let i = 0; i < this.outputClients.length; i++) {
       const distance = Math.hypot(x - this.outputClients[i].x, y - this.outputClients[i].y)
-      if(distance < 0.05) {
+      if(distance < winDistance) {
         this.inputClients[this.inputClients.findIndex(d => d.socket.id === id)].hasFallen = true
         this.outputClients[i].score += 1
         break

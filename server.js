@@ -5,6 +5,7 @@ let app = express();
 let server = require('http').createServer(app).listen(port, function () {
   console.log('Server listening at port: ', port);
 });
+
 const Game = require('./game.js')
 const game = new Game()
 
