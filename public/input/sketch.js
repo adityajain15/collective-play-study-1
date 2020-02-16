@@ -45,21 +45,25 @@ function keyPressed() {
   if (keyCode === LEFT_ARROW) {
     x--;
     socket.emit('data', {
-      x: mappedX
+      x: mappedX,
+      y: mappedY
     })
   } else if (keyCode === RIGHT_ARROW) {
     x++;
     socket.emit('data', {
-      x: mappedX
+      x: mappedX,
+      y: mappedY
     })
   } else if (keyCode === UP_ARROW) {
     y--;
     socket.emit('data', {
+      x: mappedX,
       y: mappedY
     })
   } else(keyCode === DOWN_ARROW) {
     y++;
     socket.emit('data', {
+      x:mappedX,
       y: mappedY
     })
   }
