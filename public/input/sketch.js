@@ -4,7 +4,7 @@ let socket = io('/input');
 // this object contains everything you need to draw in this sketch, including win conditions
 // DO NOT MUTATE THIS OBJECT, IT SHOULD BE READ ONLY
 // Changes to position are made by emitting the data, NOT by changing X, Y positions within this object
-let circle = {};
+let circle = null;
 
 let x;
 let y;
@@ -48,7 +48,7 @@ function setup() {
 function draw(){
   background(255);
     
-  if (!circle.hasFallen) {
+  if (circle && !circle.hasFallen) {
       fill(circle.color);
       
       ellipse(circle.x * width, circle.y * height, 20, 20);
