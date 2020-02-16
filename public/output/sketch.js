@@ -6,9 +6,14 @@ let socket = io('/output')
 let outputClients = []
 let inputClients = []
 
+let wormholeX;
+let wormholeY;
+let score;
+
 function setup() {
-  createCanvas(windowWidth, windowHeight)
-  background(255)
+  createCanvas(windowWidth, windowHeight);
+  background(255);
+  textAlign(CENTER);
   
   /*
   -- You should not need to edit this function ---
@@ -40,8 +45,43 @@ function setup() {
     console.log(data)
     inputClients = data
   })
+    
 }
 
 function draw() {
-  
+    
+    background(255);
+    
+    for (let outputClient of outputClients) {
+        if (outputClient.id == socket.id) {
+            wormholeX = outputClient.x * width;
+            wormholeY = outputClient.y * width;
+            score = outputClient.score;
+        }
+    }
+
+    stroke(100);
+    strokeWeight(5);
+    
+    fill(200);
+    ellipse(wormholeX, wormholeY, 50, 50);
+    
+    fill(255);
+    textSize(12);
+    text("goal", wormholeX, wormholeY + 3);
+
+    noStroke();
+    
+    for (let inputClient of inputClients) {
+        if (!inputClient.hasFallen) {
+            fill(inputClient.color);
+            ellipse(inputClient.x * width, inputClient.y * height, 20, 20);
+        }
+    }
+    
+    fill(100);
+    textSize(15);
+    text("direct the other players towards your goal", width/2, 50);
+    text("your current score is " + score, width/2, 80);
+    
 }
