@@ -3,6 +3,7 @@ const paperColors = require('paper-colors');
 // pastel colors, and a counter to allot unique colors as often as possible
 const color = paperColors
 let index = 0
+const winDistance = 0.01
 
 class Game{
   constructor(){
@@ -97,8 +98,12 @@ class Game{
 
   wormholeCheck (id, x, y) {
     for(let i = 0; i < this.outputClients.length; i++) {
-      const distance = Math.hypot(x - this.outputClients[i].x, y - this.outputClients[i].y)
-      if(distance < 0.05) {
+      const distance = Math.hypot(x.toFixed(2) - this.outputClients[i].x.toFixed(2), y.toFixed(2) - this.outputClients[i].y.toFixed(2))
+      //console.log(x.toFixed(2))
+      //console.log(this.outputClients[i].x.toFixed(2))
+      //console.log(distance)
+      //console.log(winDistance)
+      if(distance < winDistance) {
         this.inputClients[this.inputClients.findIndex(d => d.socket.id === id)].hasFallen = true
         this.outputClients[i].score += 1
         break

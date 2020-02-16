@@ -4,7 +4,7 @@ let socket = io('/input');
 // this object contains everything you need to draw in this sketch, including win conditions
 // DO NOT MUTATE THIS OBJECT, IT SHOULD BE READ ONLY
 // Changes to position are made by emitting the data, NOT by changing X, Y positions within this object
-let circle = null;
+let inputClient = null;
 
 let x;
 let y;
@@ -35,26 +35,26 @@ function setup() {
       @PAYLOAD: data, an object
         @x: normalized x position (between 0 and 1)
         @y: normalized y position (between 0 and 1)
-        @color: what color the circle needs to be
+        @color: what color the inputClient needs to be
         @hasFallen: has this input client fallen into a wormhole
         @id: this input client's id, for convinience
   */
   socket.on('init', function(data) {
-    console.log(data);
-    circle = data
+    inputClient = data
+    updateCanvas()
   })
 }
 
-function draw(){
+function updateCanvas(){
   background(255);
     
-  if (circle && !circle.hasFallen) {
-      fill(circle.color);
+  if (inputClient && !inputClient.hasFallen) {
+      fill(inputClient.color);
       
-      ellipse(circle.x * width, circle.y * height, 20, 20);
+      circle(inputClient.x * width, inputClient.y * height, 20)
       
-      x = circle.x * width;
-      y = circle.y * height;
+      x = inputClient.x * width;
+      y = inputClient.y * height;
   
       if (keyIsDown(LEFT_ARROW)) {
         if (xSpeed > -maxSpeed) {

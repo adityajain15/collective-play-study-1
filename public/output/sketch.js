@@ -61,14 +61,15 @@ function draw() {
     }
 
     stroke(100);
-    strokeWeight(5);
+    //strokeWeight(5);
     
     fill(200);
-    ellipse(wormholeX, wormholeY, 50, 50);
+    circle(wormholeX, wormholeY, 15);
     
-    fill(255);
-    textSize(12);
-    text("goal", wormholeX, wormholeY + 3);
+    
+    //fill(255);
+    //textSize(12);
+    //text("goal", wormholeX, wormholeY + 3);
 
     noStroke();
     
