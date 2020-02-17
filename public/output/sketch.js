@@ -32,7 +32,7 @@ function setup() {
   })
 
   socket.on('finish', function(data){
-    console.log(finish)
+    console.log(data)
     finish = data
   })
 
