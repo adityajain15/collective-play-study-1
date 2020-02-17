@@ -45,8 +45,8 @@ You will need to emit a 'data' function when the arrow keys are pressed, with th
     @y: an updated normalized y position (between 0 and 1)
     @id: this input client's id (obtainable through socket.id)
 */
-function draw(){
-  if(inputClient){
+function draw() {
+  if(inputClient) {
     clear()
     fill(inputClient.color)
     noStroke()
