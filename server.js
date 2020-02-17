@@ -53,12 +53,14 @@ inputs.on('connection', function(socket){
     const x = data.x
     const y = data.y
     const id = data.id
-    
-    game.changePosition(id, x, y)
-    game.wormholeCheck(id, x, y)
-    socket.emit('init', game.getClientById(id))
-
-    outputs.emit('inputClients', game.getInputClients())
+    if(!game.checkFallen(id)) {
+      game.changePosition(id, x, y)
+      if(game.wormholeCheck(id, x, y)){
+        outputs.emit('outputClients', game.getOutputClients())
+      }
+      socket.emit('init', game.getClientById(id))
+      outputs.emit('inputClients', game.getInputClients())
+    }
   })
 
   socket.on('disconnect', function() {

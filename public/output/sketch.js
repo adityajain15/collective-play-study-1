@@ -3,12 +3,8 @@ let socket = io('/output')
 
 // use the arrays below to draw everything, they should contain all the information you need
 // DO NOT MUTATE THESE ARRAYS, THEY SHOULD BE READ ONLY
-let outputClients = []
+let outputClient = {x:0, y:0, score:0, id:''}
 let inputClients = []
-
-let wormholeX;
-let wormholeY;
-let score;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -27,7 +23,11 @@ function setup() {
   socket.on('outputClients', function(data){
     console.log('---OUTPUT CLIENTS---')
     console.log(data)
-    outputClients = data
+    for(let i = 0; i < data.length; i++){
+      if(data[i].id === socket.id) {
+        outputClient = data[i]
+      }
+    }
   })
 
   /*
@@ -49,40 +49,34 @@ function setup() {
 }
 
 function draw() {
-    
-    background(255);
-    
-    for (let outputClient of outputClients) {
-        if (outputClient.id == socket.id) {
-            wormholeX = outputClient.x * width;
-            wormholeY = outputClient.y * width;
-            score = outputClient.score;
-        }
-    }
+  let mappedX = map(outputClient.x, 0, 1, 0, windowWidth)
+  let mappedY = map(outputClient.y, 0, 1, 0, windowHeight)
+  background(255);
+  //stroke(100);
+  //strokeWeight(5);
+  fill(200);
+  noStroke();
+  circle(mappedX, mappedY, 15)
+  
+  
+  //fill(255);
+  //textSize(12);
+  //text("goal", wormholeX, wormholeY + 3);
 
-    stroke(100);
-    //strokeWeight(5);
-    
-    fill(200);
-    circle(wormholeX, wormholeY, 15);
-    
-    
-    //fill(255);
-    //textSize(12);
-    //text("goal", wormholeX, wormholeY + 3);
-
-    noStroke();
-    
-    for (let inputClient of inputClients) {
-        if (!inputClient.hasFallen) {
-            fill(inputClient.color);
-            ellipse(inputClient.x * width, inputClient.y * height, 20, 20);
-        }
+  
+  
+  for (let inputClient of inputClients) {
+    if (!inputClient.hasFallen) {
+      const mappedX = map(inputClient.x, 0, 1, 0, windowWidth)
+      const mappedY = map(inputClient.y, 0, 1, 0, windowHeight)
+      fill(inputClient.color);
+      circle(mappedX, mappedY, 20)
     }
-    
-    fill(100);
-    textSize(15);
-    text("direct the other players towards your goal", width/2, 50);
-    text("your current score is " + score, width/2, 80);
-    
+  }
+  
+  fill(100);
+  textSize(15);
+  text("direct the other players towards your goal", width/2, 50);
+  text("your current score is " + outputClient.score, width/2, 80);
+  
 }

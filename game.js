@@ -3,7 +3,7 @@ const paperColors = require('paper-colors');
 // pastel colors, and a counter to allot unique colors as often as possible
 const color = paperColors
 let index = 0
-const winDistance = 0.01
+const winDistance = 0.03
 
 class Game{
   constructor(){
@@ -17,8 +17,8 @@ class Game{
     this.inputClients.push({
       socket: socket,
       color: paperColors[index % 12].hex,
-      x: Math.random(),
-      y: Math.random(),
+      x: parseFloat(Math.random().toFixed(2)),
+      y: parseFloat(Math.random().toFixed(2)),
       hasFallen: false
     })
     index++
@@ -60,8 +60,8 @@ class Game{
   // add output client
   addOutputClient (socket) {
     this.outputClients.push({
-      x: Math.random(),
-      y: Math.random(),
+      x: parseFloat(Math.random().toFixed(2)),
+      y: parseFloat(Math.random().toFixed(2)),
       score: 0,
       socket: socket
     })
@@ -87,6 +87,11 @@ class Game{
     return outputClients
   }
   
+  // check if input client has fallen
+  checkFallen (id) {
+    return this.getClientById(id).hasFallen
+  }
+
   // change position of input client
   changePosition (id, x, y) {
     if(this.inputClients.find(el=>el.socket.id === id)) {
@@ -98,17 +103,22 @@ class Game{
 
   wormholeCheck (id, x, y) {
     for(let i = 0; i < this.outputClients.length; i++) {
-      const distance = Math.hypot(x.toFixed(2) - this.outputClients[i].x.toFixed(2), y.toFixed(2) - this.outputClients[i].y.toFixed(2))
+      const distance = parseFloat(Math.hypot(parseFloat(x.toFixed(2)) - this.outputClients[i].x, parseFloat(y.toFixed(2)) - this.outputClients[i].y).toFixed(2))
       //console.log(x.toFixed(2))
       //console.log(this.outputClients[i].x.toFixed(2))
-      //console.log(distance)
-      //console.log(winDistance)
-      if(distance < winDistance) {
+      if((parseFloat(x.toFixed(2)) === this.outputClients[i].x) && (parseFloat(y.toFixed(2)) === this.outputClients[i].y)) {
         this.inputClients[this.inputClients.findIndex(d => d.socket.id === id)].hasFallen = true
         this.outputClients[i].score += 1
-        break
+        return true
       }
+      
+      /*if(distance < winDistance) {
+        this.inputClients[this.inputClients.findIndex(d => d.socket.id === id)].hasFallen = true
+        this.outputClients[i].score += 1
+        return true
+      }*/
     }
+    return false
   }
 
   hasGameFinished () {
