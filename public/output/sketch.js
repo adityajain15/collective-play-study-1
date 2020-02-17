@@ -22,8 +22,8 @@ function setup() {
       @id: an output client's id, compare this to socket.id to find out if this the currently connected output client
   */
   socket.on('outputClients', function(data){
-    console.log('---OUTPUT CLIENTS---')
-    console.log(data)
+    // console.log('---OUTPUT CLIENTS---')
+    // console.log(data)
     for(let i = 0; i < data.length; i++){
       if(data[i].id === socket.id) {
         outputClient = data[i]
@@ -32,7 +32,7 @@ function setup() {
   })
 
   socket.on('finish', function(data){
-    console.log(finish)
+    console.log(data)
     finish = data
   })
 
@@ -47,8 +47,8 @@ function setup() {
       @hasFallen: if the input client has fallen into any wormhole, use this to determine whether to draw this input client or not
   */
   socket.on('inputClients', function(data){
-    console.log('---INPUT CLIENTS---')
-    console.log(data)
+    // console.log('---INPUT CLIENTS---')
+    // console.log(data)
     inputClients = data
   })
     

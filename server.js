@@ -20,7 +20,6 @@ var outputs = io.of('/output');
 outputs.on('connection', function(socket){
   // add this output client to the game
   game.addOutputClient(socket)
-  console.log(game.outputClients.length)
   // send this output client a list of all current output clients (which includes itself)
   outputs.emit('outputClients', game.getOutputClients())
   // send this output client a list of all current input clients
