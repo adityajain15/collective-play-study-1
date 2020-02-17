@@ -4,7 +4,7 @@ let socket = io('/input');
 // this object contains everything you need to draw in this sketch, including win conditions
 // DO NOT MUTATE THIS OBJECT, IT SHOULD BE READ ONLY
 // Changes to position are made by emitting the data, NOT by changing X, Y positions within this object
-let inputClient = {};
+let inputClient = null
 
 function setup() {
   createCanvas(windowWidth, windowHeight)
@@ -40,34 +40,36 @@ You will need to emit a 'data' function when the arrow keys are pressed, with th
     @id: this input client's id (obtainable through socket.id)
 */
 function draw(){
-  clear()
-  fill(inputClient.color ? inputClient.color : 'black')
-  noStroke()
-  let mappedX = map(inputClient.x, 0, 1, 0, windowWidth)
-  let mappedY = map(inputClient.y, 0, 1, 0, windowHeight)
-  console.log(`drawing ${mappedX},${mappedY}`)
-  //console.log(`current cordinates: ${mappedX}, ${mappedY}`)
-  //console.log(`current cordinates: ${inputClient.x}, ${inputClient.y}`)
-  circle(mappedX, mappedY, 20)
-  let changeX = 0
-  let changeY = 0
-  if (keyIsDown(LEFT_ARROW)) {
-    changeX -= 1
-  }
-  if (keyIsDown(RIGHT_ARROW)) {
-    changeX += 1
-  }
-  if (keyIsDown(UP_ARROW)) {
-    changeY -= 1
-  }
-  if (keyIsDown(DOWN_ARROW)) {
-    changeY += 1
-  }
-  if(changeX !== 0 || changeY !== 0) {
-    socket.emit('data', {
-      x: (mappedX + changeX) / windowWidth,
-      y: (mappedY + changeY) / windowHeight,
-      id: socket.id
-    })
+  if(inputClient){
+    clear()
+    fill(inputClient.color)
+    noStroke()
+    let mappedX = map(inputClient.x, 0, 1, 0, windowWidth)
+    let mappedY = map(inputClient.y, 0, 1, 0, windowHeight)
+    console.log(`drawing ${mappedX},${mappedY}`)
+    //console.log(`current cordinates: ${mappedX}, ${mappedY}`)
+    //console.log(`current cordinates: ${inputClient.x}, ${inputClient.y}`)
+    circle(mappedX, mappedY, 20)
+    let changeX = 0
+    let changeY = 0
+    if (keyIsDown(LEFT_ARROW)) {
+      changeX -= 1
+    }
+    if (keyIsDown(RIGHT_ARROW)) {
+      changeX += 1
+    }
+    if (keyIsDown(UP_ARROW)) {
+      changeY -= 1
+    }
+    if (keyIsDown(DOWN_ARROW)) {
+      changeY += 1
+    }
+    if(changeX !== 0 || changeY !== 0) {
+      socket.emit('data', {
+        x: (mappedX + changeX) / windowWidth,
+        y: (mappedY + changeY) / windowHeight,
+        id: socket.id
+      })
+    }
   }
 }
