@@ -89,11 +89,11 @@ function draw() {
         }
     }
       
-    if ((mappedX + changeX - 10) / windowWidth < 0 || (mappedX + changeX + 10) / windowWidth > 1) {
+    if ((mappedX + changeX) / windowWidth < 0 || (mappedX + changeX) / windowWidth > 1) {
         changeX = 0;
     }
       
-    if ((mappedY + changeY - 10) / windowHeight < 0 || (mappedY + changeY + 10) / windowHeight > 1) {
+    if ((mappedY + changeY) / windowHeight < 0 || (mappedY + changeY) / windowHeight > 1) {
         changeY = 0;
     }
     
