@@ -104,8 +104,6 @@ class Game{
   wormholeCheck (id, x, y) {
     for(let i = 0; i < this.outputClients.length; i++) {
       const distance = parseFloat(Math.hypot(parseFloat(x.toFixed(2)) - this.outputClients[i].x, parseFloat(y.toFixed(2)) - this.outputClients[i].y).toFixed(2))
-      //console.log(x.toFixed(2))
-      //console.log(this.outputClients[i].x.toFixed(2))
       if((parseFloat(x.toFixed(2)) === this.outputClients[i].x) && (parseFloat(y.toFixed(2)) === this.outputClients[i].y)) {
         this.inputClients[this.inputClients.findIndex(d => d.socket.id === id)].hasFallen = true
         this.outputClients[i].score += 1
@@ -126,14 +124,15 @@ class Game{
   }
 
   getWinner () {
-    const scores = this.outputClients.map(d=>d.score)
-    const maxScore = Math.max(scores)
+    const scores = this.outputClients.map(d=>parseInt(d.score))
+    const maxScore = scores.reduce((a,b)=>a<b?b:a, 0)
     const winners = []
     for(let i = 0; i < this.outputClients.length; i++) {
       if(this.outputClients[i].score === maxScore) {
-        winners.push(this.outputClients[i].id)
+        winners.push(this.outputClients[i].socket.id)
       }
     }
+    console.log(scores)
     return winners
   }
 }
