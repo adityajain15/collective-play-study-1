@@ -31,7 +31,8 @@ function setup() {
     }
   })
 
-  socket.on('winner', function(data){
+  socket.on('finish', function(data){
+    console.log(finish)
     finish = data
   })
 
