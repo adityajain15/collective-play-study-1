@@ -111,6 +111,7 @@ function draw() {
     }
     
     else {
+        clear()
         textAlign(CENTER)
         textSize(20);
         text("your game has ended", width/2, height/2 - 40);
