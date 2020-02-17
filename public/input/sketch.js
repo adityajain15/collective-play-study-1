@@ -6,6 +6,12 @@ let socket = io('/input');
 // Changes to position are made by emitting the data, NOT by changing X, Y positions within this object
 let inputClient = null
 
+let changeX = 0;
+let changeY = 0;
+
+let maxChange = 2;
+let accel = 0.02;
+
 function setup() {
   createCanvas(windowWidth, windowHeight)
   background(255)
@@ -50,20 +56,39 @@ function draw(){
     //console.log(`current cordinates: ${mappedX}, ${mappedY}`)
     //console.log(`current cordinates: ${inputClient.x}, ${inputClient.y}`)
     circle(mappedX, mappedY, 20)
-    let changeX = 0
-    let changeY = 0
+
     if (keyIsDown(LEFT_ARROW)) {
-      changeX -= 1
+      if (changeX > -maxChange) {changeX -= accel;}
     }
-    if (keyIsDown(RIGHT_ARROW)) {
-      changeX += 1
+    else if (keyIsDown(RIGHT_ARROW)) {
+      if (changeX < maxChange) {changeX += accel;}
     }
+      
+    else {
+        if (changeX > 0) {
+            changeX -= accel;
+        }
+        if (changeX < 0) {
+            changeX += accel;
+        }
+    }
+      
     if (keyIsDown(UP_ARROW)) {
-      changeY -= 1
+      if (changeY > -maxChange) {changeY -= accel;}
     }
-    if (keyIsDown(DOWN_ARROW)) {
-      changeY += 1
+    else if (keyIsDown(DOWN_ARROW)) {
+      if (changeY < maxChange) {changeY += accel;}
     }
+      
+    else {
+        if (changeY > 0) {
+            changeY -= accel;
+        }
+        if (changeY < 0) {
+            changeY += accel;
+        }
+    }
+    
     if(changeX !== 0 || changeY !== 0) {
       socket.emit('data', {
         x: (mappedX + changeX) / windowWidth,
