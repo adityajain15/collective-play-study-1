@@ -81,7 +81,8 @@ class Game{
         x: d.x,
         y: d.y,
         score: d.score,
-        id: d.socket.id
+        id: d.socket.id,
+        hasGameFinished: this.isFinished
       }
     })
     return outputClients
