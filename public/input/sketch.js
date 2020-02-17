@@ -88,6 +88,14 @@ function draw(){
             changeY += accel;
         }
     }
+      
+    if ((mappedX + changeX - 10) / windowWidth < 0 || (mappedX + changeX + 10) / windowWidth > 1) {
+        changeX = 0;
+    }
+      
+    if ((mappedY + changeY - 10) / windowHeight < 0 || (mappedY + changeY + 10) / windowHeight > 1) {
+        changeX = 0;
+    }
     
     if(changeX !== 0 || changeY !== 0) {
       socket.emit('data', {
