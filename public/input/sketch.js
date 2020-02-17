@@ -94,7 +94,7 @@ function draw(){
     }
       
     if ((mappedY + changeY - 10) / windowHeight < 0 || (mappedY + changeY + 10) / windowHeight > 1) {
-        changeX = 0;
+        changeY = 0;
     }
     
     if(changeX !== 0 || changeY !== 0) {
