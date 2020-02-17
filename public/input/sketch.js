@@ -47,62 +47,74 @@ You will need to emit a 'data' function when the arrow keys are pressed, with th
 */
 function draw() {
   if(inputClient) {
-    clear()
-    fill(inputClient.color)
-    noStroke()
-    let mappedX = map(inputClient.x, 0, 1, 0, windowWidth)
-    let mappedY = map(inputClient.y, 0, 1, 0, windowHeight)
-    console.log(`drawing ${mappedX},${mappedY}`)
-    //console.log(`current cordinates: ${mappedX}, ${mappedY}`)
-    //console.log(`current cordinates: ${inputClient.x}, ${inputClient.y}`)
-    circle(mappedX, mappedY, 20)
+    
+    if (!inputClient.hasFallen) {
+        
+        clear()
+        fill(inputClient.color)
+        noStroke()
+        
+        let mappedX = map(inputClient.x, 0, 1, 0, windowWidth)
+        let mappedY = map(inputClient.y, 0, 1, 0, windowHeight)
+        console.log(`drawing ${mappedX},${mappedY}`)
+        //console.log(`current cordinates: ${mappedX}, ${mappedY}`)
+        //console.log(`current cordinates: ${inputClient.x}, ${inputClient.y}`)
+        circle(mappedX, mappedY, 20)
 
-    if (keyIsDown(LEFT_ARROW)) {
-      if (changeX > -maxChange) {changeX -= accel;}
-    }
-    else if (keyIsDown(RIGHT_ARROW)) {
-      if (changeX < maxChange) {changeX += accel;}
-    }
-      
-    else {
-        if (changeX > 0) {
-            changeX -= accel;
+        if (keyIsDown(LEFT_ARROW)) {
+          if (changeX > -maxChange) {changeX -= accel;}
         }
-        if (changeX < 0) {
-            changeX += accel;
+        else if (keyIsDown(RIGHT_ARROW)) {
+          if (changeX < maxChange) {changeX += accel;}
         }
-    }
-      
-    if (keyIsDown(UP_ARROW)) {
-      if (changeY > -maxChange) {changeY -= accel;}
-    }
-    else if (keyIsDown(DOWN_ARROW)) {
-      if (changeY < maxChange) {changeY += accel;}
-    }
-      
-    else {
-        if (changeY > 0) {
-            changeY -= accel;
+
+        else {
+            if (changeX > 0) {
+                changeX -= accel;
+            }
+            if (changeX < 0) {
+                changeX += accel;
+            }
         }
-        if (changeY < 0) {
-            changeY += accel;
+
+        if (keyIsDown(UP_ARROW)) {
+          if (changeY > -maxChange) {changeY -= accel;}
         }
-    }
-      
-    if ((mappedX + changeX) / windowWidth < 0 || (mappedX + changeX) / windowWidth > 1) {
-        changeX = 0;
-    }
-      
-    if ((mappedY + changeY) / windowHeight < 0 || (mappedY + changeY) / windowHeight > 1) {
-        changeY = 0;
+        else if (keyIsDown(DOWN_ARROW)) {
+          if (changeY < maxChange) {changeY += accel;}
+        }
+
+        else {
+            if (changeY > 0) {
+                changeY -= accel;
+            }
+            if (changeY < 0) {
+                changeY += accel;
+            }
+        }
+
+        if ((mappedX + changeX) / windowWidth < 0 || (mappedX + changeX) / windowWidth > 1) {
+            changeX = 0;
+        }
+
+        if ((mappedY + changeY) / windowHeight < 0 || (mappedY + changeY) / windowHeight > 1) {
+            changeY = 0;
+        }
+
+        if(changeX !== 0 || changeY !== 0) {
+          socket.emit('data', {
+            x: (mappedX + changeX) / windowWidth,
+            y: (mappedY + changeY) / windowHeight,
+            id: socket.id
+          })
+        }  
     }
     
-    if(changeX !== 0 || changeY !== 0) {
-      socket.emit('data', {
-        x: (mappedX + changeX) / windowWidth,
-        y: (mappedY + changeY) / windowHeight,
-        id: socket.id
-      })
+    else {
+        textAlign(CENTER)
+        textSize(20);
+        text("your game has ended", width/2, height/2 - 40);
+        text("are you happy with your choices?", width/2, height/2);
     }
   }
 }
