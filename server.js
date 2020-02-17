@@ -57,6 +57,9 @@ inputs.on('connection', function(socket){
       game.changePosition(id, x, y)
       if(game.wormholeCheck(id, x, y)){
         outputs.emit('outputClients', game.getOutputClients())
+        if(game.hasGameFinished()){
+          outputs.emit('finish', game.getWinner())
+        }
       }
       socket.emit('init', game.getClientById(id))
       outputs.emit('inputClients', game.getInputClients())

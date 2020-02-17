@@ -122,8 +122,19 @@ class Game{
   }
 
   hasGameFinished () {
-    this.isFinished = this.inputClients.map(d=>d.hasFallen).reduce((a,b)=>a&&b, true)
-    return this.isFinished
+    return this.inputClients.map(d=>d.hasFallen).reduce((a,b)=>a&&b, true)
+  }
+
+  getWinner () {
+    const scores = this.outputClients.map(d=>d.score)
+    const maxScore = Math.max(scores)
+    const winners = []
+    for(let i = 0; i < this.outputClients.length; i++) {
+      if(this.outputClients[i].score === maxScore) {
+        winners.push(this.outputClients[i].id)
+      }
+    }
+    return winners
   }
 }
 

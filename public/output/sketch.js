@@ -3,8 +3,9 @@ let socket = io('/output')
 
 // use the arrays below to draw everything, they should contain all the information you need
 // DO NOT MUTATE THESE ARRAYS, THEY SHOULD BE READ ONLY
-let outputClient = {x:0, y:0, score:0, id:''}
+let outputClient = {x:0, y:0, score:0, id:'', hasGameFinished: false}
 let inputClients = []
+let finish = []
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -28,6 +29,10 @@ function setup() {
         outputClient = data[i]
       }
     }
+  })
+
+  socket.on('winner', function(data){
+    finish = data
   })
 
   /*
@@ -76,7 +81,11 @@ function draw() {
   
   fill(100);
   textSize(15);
-  text("direct the other players towards your goal", width/2, 50);
-  text("your current score is " + outputClient.score, width/2, 80);
-  
-}
+  if(finish.length) {
+    text(`GAME HAS FINISHED`, width/2, 50)
+    text(finish.includes(socket.id) ? finish.length > 1 ? `ITS A TIE` : `YOU WIN. BUT YOU'RE A LOSER.` : `YOU LOSE. YOU'RE A LOSER.`, width/2, 80)
+  } else {
+    text(`SHOUT OUT THE POSITION OF YOUR WORMHOLE`, width/2, 50)
+    text(`YOUR CURRENT SCORE IS ${outputClient.score}`, width/2, 80)
+  }
+ }
